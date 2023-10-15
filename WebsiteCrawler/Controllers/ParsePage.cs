@@ -6,7 +6,7 @@ namespace WebsiteCrawler.Controllers
     {
         private readonly ILogger _logger;
 
-        public ParsePage(ILogger logger)
+        public ParsePage(ILogger<ParsePage> logger)
         {
             _logger = logger;
         }

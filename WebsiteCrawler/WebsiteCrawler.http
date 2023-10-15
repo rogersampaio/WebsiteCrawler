@@ -1,4 +1,4 @@
-@WebsiteCrawler_HostAddress = http://localhost:5052
+@WebsiteCrawler_HostAddress = https://localhost:7061/
 
 
 POST {{WebsiteCrawler_HostAddress}}/webcrawler/
