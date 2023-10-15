@@ -1,4 +1,4 @@
-﻿namespace WebsiteCrawler.Controllers
+﻿namespace WebsiteCrawler.Interfaces
 {
     public interface IExtractURLs
     {
