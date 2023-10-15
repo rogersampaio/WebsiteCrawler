@@ -22,7 +22,7 @@ namespace WebsiteCrawler.Controllers
             }
 
             List<string> distinctList = list.Distinct().ToList();
-            _logger.LogInformation($"Extracted {distinctList.Count} URLs from body");
+            _logger.LogInformation("Extracted {Count} URLs from body", distinctList.Count);
             return distinctList;
         }
 

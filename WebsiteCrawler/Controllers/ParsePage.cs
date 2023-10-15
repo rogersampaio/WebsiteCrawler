@@ -8,7 +8,10 @@ namespace WebsiteCrawler.Controllers
 
         public async Task<string> Execute(string? url)
         {
-            _logger.LogInformation($"Getting source code of {url}");
+            if (String.IsNullOrEmpty(url))
+                return "";
+
+            _logger.LogInformation("Getting source code of {url}", url);
             var myClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
             var response = await myClient.GetAsync(url);
             var streamResponse = await response.Content.ReadAsStringAsync();

@@ -22,16 +22,16 @@ namespace WebsiteCrawler.Controllers
             ArgumentNullException.ThrowIfNull(request?.Url);
 
             DateTime startTime = DateTime.Now;
-            _logger.LogInformation($"Starting crawling {request?.Url} at {startTime}");
+            _logger.LogInformation("Starting crawling {Url} at {startTime}", request?.Url, startTime);
 
             //1 - Get the inner content of requested URL
             string mainBody = await _parsePage.Execute(request?.Url);
 
             //2 - Save local file passing text body content
-            bool fileAlreadySaved = _fileManagement.Save(mainBody, request?.Url);
+            bool fileSaved = _fileManagement.Save(mainBody, request?.Url);
 
             //3 - Extract new URLs from body content if it's HTML
-            if (!fileAlreadySaved)
+            if (fileSaved)
             {
                 List<string>? newURLList = _extractURLs.Execute(mainBody);
                 //4 - Loop through new URLs and repeat same action
@@ -42,7 +42,7 @@ namespace WebsiteCrawler.Controllers
                 }
             }
 
-            _logger.LogInformation($"Finished crawling in {(DateTime.Now - startTime).TotalSeconds} seconds");
+            _logger.LogInformation("Finished crawling in {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
             return false;
         }
     }
