@@ -1,6 +1,7 @@
-@WebsiteCrawler_HostAddress = http://localhost:5052
+@WebsiteCrawler_HostAddress = https://localhost:7061/
 
-GET {{WebsiteCrawler_HostAddress}}/weatherforecast/
+
+POST {{WebsiteCrawler_HostAddress}}/webcrawler/
 Accept: application/json
 
 ###
