@@ -1,27 +1,32 @@
 ﻿using System.Text.RegularExpressions;
+using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Controllers
 {
-    public partial class ExtractURLs : IExtractURLs
+    public partial class ExtractURLs(ILogger<ExtractURLs> logger) : IExtractURLs
     {
+        private readonly ILogger _logger = logger;
+
         public List<string>? Execute(string? text)
         {
             if (text == null)
                 return null;
 
             List<string>? list = [];
-            Regex urlRx = MyRegex();
-            //(http|ftp|https)://([\w+?\.\w+])+([a-zA-Z0-9\~\!\@\#\$\%\^\&\*\(\)_\-\=\+\\\/\?\.\:\;\'\,]*)?
+            Regex hrefRegex = HrefRegex();
 
-            MatchCollection matches = urlRx.Matches(text);
+            MatchCollection matches = hrefRegex.Matches(text);
             foreach (Match match in matches.Cast<Match>())
             {
-                list.Add(match.Value);
+                list.Add(match.Value.Replace("href=", "").Replace("\"", ""));
             }
-            return list;
+
+            List<string> distinctList = list.Distinct().ToList();
+            _logger.LogInformation($"Extracted {distinctList.Count} URLs from body");
+            return distinctList;
         }
 
-        [GeneratedRegex(@"((https?|ftp|file)\://|www.)[A-Za-z0-9\.\-]+(/[A-Za-z0-9\?\&\=;\+!'\(\)\*\-\._~%]*)*", RegexOptions.IgnoreCase, "en-US")]
-        private static partial Regex MyRegex();
+        [GeneratedRegex($"href=\"(.*)\"", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex HrefRegex();
     }
 }

@@ -1,4 +1,5 @@
 using WebsiteCrawler.Controllers;
+using WebsiteCrawler.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddSwaggerGen();
 //Configure dependencies
 builder.Services.AddScoped<IParsePage, ParsePage>();
 builder.Services.AddScoped<IExtractURLs, ExtractURLs>();
+builder.Services.AddScoped<IFileManagement, FileManagement>();
 
 var app = builder.Build();
 
