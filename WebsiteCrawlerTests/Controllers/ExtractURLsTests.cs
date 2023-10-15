@@ -47,5 +47,20 @@ namespace WebsiteCrawler.Controllers.Tests
             //Then
             Assert.IsTrue(urlList?.Count == 1);
         }
+
+        //[TestMethod()]
+        //public void ExecuteImageTest()
+        //{
+        //    //Given
+        //    string text = "<img src=\"media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg\" alt=\"A Light in the Attic\" class=\"thumbnail\">";
+        //    List<string>? urlList = [];
+
+        //    //When
+        //    ExtractURLs extractURLs = new(_logger);
+        //    urlList = extractURLs.Execute(text);
+
+        //    //Then
+        //    Assert.IsTrue(urlList?.Count == 1);
+        //}
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Controllers
@@ -42,22 +41,12 @@ namespace WebsiteCrawler.Controllers
                     // Add some information to the file.
                     fs.Write(info, 0, info.Length);
                 }
-
-                // Open the stream and read it back.
-                using (StreamReader sr = File.OpenText(filePath))
-                {
-                    string s = "";
-                    while ((s = sr.ReadLine()) != null)
-                    {
-                        Console.WriteLine(s);
-                    }
-                }
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 _logger.LogError("Exception Saving file: {filePath}", filePath);
-                Console.WriteLine(ex.ToString());
+                throw;
             }
 
             return true;
@@ -102,6 +91,11 @@ namespace WebsiteCrawler.Controllers
             {
                 return "index.html";
             }
+        }
+
+        public bool IsHtml(string? url) {
+            string fileName =  GetFilename(url);
+            return fileName.Contains(".html");
         }
     }
 }

@@ -113,7 +113,6 @@ namespace WebsiteCrawler.Controllers.Tests
         {
             //Given
             string url = "https://books.toscrape.com/";
-            bool result;
 
             //When
             FileManagement fileManagement = new(_logger);
@@ -131,7 +130,6 @@ namespace WebsiteCrawler.Controllers.Tests
         {
             //Given
             string url = "https://books.toscrape.com/file.txt";
-            bool result;
 
             //When
             FileManagement fileManagement = new(_logger);
@@ -176,6 +174,34 @@ namespace WebsiteCrawler.Controllers.Tests
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
             Assert.IsTrue(File.Exists(filePath));
+        }
+
+        [TestMethod()]
+        public void IsHtmlTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/test/file.html";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            bool result = fileManagement.IsHtml(url);
+
+            //Then
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void IsHtmlNotTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/test/file.txt";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            bool result = fileManagement.IsHtml(url);
+
+            //Then
+            Assert.IsFalse(result);
         }
     }
 }

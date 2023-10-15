@@ -17,7 +17,7 @@ namespace WebsiteCrawler.Controllers
         private readonly IFileManagement _fileManagement = fileManagement;
 
         [HttpPost(Name = "PostStartCrawling")]
-        public async Task<bool> Post(Request request)
+        public async Task Post(Request request)
         {
             ArgumentNullException.ThrowIfNull(request?.Url);
 
@@ -30,20 +30,22 @@ namespace WebsiteCrawler.Controllers
             //2 - Save local file passing text body content
             bool fileSaved = _fileManagement.Save(mainBody, request?.Url);
 
-            //3 - Extract new URLs from body content if it's HTML
-            if (fileSaved)
+            //3 - Extract new URLs from body content if it's HTML and it was saved
+            if (fileSaved && _fileManagement.IsHtml(request?.Url))
             {
                 List<string>? newURLList = _extractURLs.Execute(mainBody);
                 //4 - Loop through new URLs and repeat same action
+                Task[] taskList = [];
                 for (int i = 0; i < newURLList?.Count; i++)
                 {
-                    string url = newURLList[i];
                     //5 - Call same function recursively, passing URL and URL folder to create/update
+                    string url = newURLList[i];
+                    taskList.Append(Post(new Request { Url = $"{request?.Url}{url}" }));
                 }
+                Task.WaitAll(taskList);
             }
 
             _logger.LogInformation("Finished crawling in {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
-            return false;
         }
     }
 }
