@@ -1,4 +1,5 @@
-﻿using WebsiteCrawler.Interfaces;
+﻿using System.Data.SqlTypes;
+using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Controllers
 {
@@ -8,8 +9,11 @@ namespace WebsiteCrawler.Controllers
 
         public async Task<string> Execute(string? url)
         {
-            if (String.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(url))
                 return "";
+
+            if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase) || url.Contains(".jpeg", StringComparison.CurrentCultureIgnoreCase))
+                return "image";
 
             _logger.LogInformation("Getting source code of {url}", url);
             var myClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });

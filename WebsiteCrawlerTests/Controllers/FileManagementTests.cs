@@ -1,5 +1,4 @@
-﻿using WebsiteCrawler.Controllers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,6 +9,7 @@ namespace WebsiteCrawler.Controllers.Tests
     public class FileManagementTests
     {
         public required ILogger<FileManagement> _logger;
+        public string? _output = "c:/source";
 
         [TestInitialize()]
         public void Initialize()
@@ -22,15 +22,15 @@ namespace WebsiteCrawler.Controllers.Tests
         public void GetPathWithRootFolderTest()
         {
             //Given
-            string url = "https://books.toscrape.com/";
+            string? url = "https://books.toscrape.com/";
             string result;
 
             //When
             FileManagement fileManagement = new(_logger);
-            result = fileManagement.GetPath(url);
+            result = fileManagement.GetPath(url, _output);
 
             //Then
-            Assert.AreEqual(result, "source/");
+            Assert.AreEqual(result, $"{_output}/");
         }
 
         [TestMethod()]
@@ -42,10 +42,10 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            result = fileManagement.GetPath(url);
+            result = fileManagement.GetPath(url, _output);
 
             //Then
-            Assert.AreEqual(result, "source/test");
+            Assert.AreEqual(result, $"{_output}/test");
         }
 
         [TestMethod()]
@@ -57,10 +57,10 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            result = fileManagement.GetPath(url);
+            result = fileManagement.GetPath(url, _output);
 
             //Then
-            Assert.AreEqual(result, "source/test");
+            Assert.AreEqual(result, $"{_output}/test");
         }
 
         [TestMethod()]
@@ -109,6 +109,21 @@ namespace WebsiteCrawler.Controllers.Tests
         }
 
         [TestMethod()]
+        public void GetFileNameWithQueryStringTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/test/index.html%20title=A%20la%20Mode:%20120%20Recipes%20in%2060%20Pairings:%20Pies,%20Tarts,%20Cakes";
+            string result;
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            result = fileManagement.GetFilename(url);
+
+            //Then
+            Assert.AreEqual(result, "index.html");
+        }
+
+        [TestMethod()]
         public void SaveRootIndexTest()
         {
             //Given
@@ -116,10 +131,10 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url);
+            fileManagement.Save("test", url, _output);
 
             //Then
-            string path = fileManagement.GetPath(url);
+            string path = fileManagement.GetPath(url, _output);
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
             Assert.IsTrue(File.Exists(filePath));
@@ -133,10 +148,10 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url);
+            fileManagement.Save("test", url, _output);
 
             //Then
-            string path = fileManagement.GetPath(url);
+            string path = fileManagement.GetPath(url, _output);
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
             Assert.IsTrue(File.Exists(filePath));
@@ -150,10 +165,10 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url);
+            fileManagement.Save("test", url, _output);
 
             //Then
-            string path = fileManagement.GetPath(url);
+            string path = fileManagement.GetPath(url, _output);
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
             Assert.IsTrue(File.Exists(filePath));
@@ -167,41 +182,126 @@ namespace WebsiteCrawler.Controllers.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url);
+            fileManagement.Save("test", url, _output);
 
             //Then
-            string path = fileManagement.GetPath(url);
+            string path = fileManagement.GetPath(url, _output);
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
             Assert.IsTrue(File.Exists(filePath));
         }
 
         [TestMethod()]
-        public void IsHtmlTest()
+        public void SaveFontTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/static/oscar/fonts/fontawesome-webfont.woff%3Fv=3.2.1";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            fileManagement.Save("test", url, _output);
+
+            //Then
+            string path = fileManagement.GetPath(url, _output);
+            string fileName = fileManagement.GetFilename(url);
+            string filePath = Path.Combine(path, fileName);
+            //File should have the name fontawesome-webfont.woff_v=3.2.1
+            Assert.IsTrue(File.Exists(filePath));
+        }
+
+        //
+
+        [TestMethod()]
+        public void SaveImageTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            fileManagement.Save("test", url, _output);
+
+            //Then
+            string path = fileManagement.GetPath(url, _output);
+            string fileName = fileManagement.GetFilename(url);
+            string filePath = Path.Combine(path, fileName);
+            Assert.IsTrue(File.Exists(filePath));
+        }
+
+
+        [TestMethod()]
+        public void SaveImageWithStrangeNameTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg any new Parameter here";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            fileManagement.Save("test", url, _output);
+
+            //Then
+            string path = fileManagement.GetPath(url, _output);
+            string fileName = fileManagement.GetFilename(url);
+            string filePath = Path.Combine(path, fileName);
+            Assert.IsTrue(File.Exists(filePath));
+        }
+
+        [TestMethod()]
+        public void IsReadableTest()
         {
             //Given
             string url = "https://books.toscrape.com/test/file.html";
 
             //When
             FileManagement fileManagement = new(_logger);
-            bool result = fileManagement.IsHtml(url);
+            bool result = fileManagement.IsReadable(url);
 
             //Then
             Assert.IsTrue(result);
         }
 
         [TestMethod()]
-        public void IsHtmlNotTest()
+        public void IsReadableNotTest()
         {
             //Given
             string url = "https://books.toscrape.com/test/file.txt";
 
             //When
             FileManagement fileManagement = new(_logger);
-            bool result = fileManagement.IsHtml(url);
+            bool result = fileManagement.IsReadable(url);
 
             //Then
             Assert.IsFalse(result);
+        }
+
+        [TestMethod()]
+        public void GetNewUrlTest()
+        {
+            //Given
+            string root = "https://books.toscrape.com/static/oscar/css/styles.css";
+            string newPath = "../fonts/glyphicons-halflings-regular.eot";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            string result = fileManagement.GetNewUrl(root, newPath);
+
+            //Then
+            Assert.AreEqual(result, "https://books.toscrape.com/static/oscar/fonts/glyphicons-halflings-regular.eot");
+        }
+
+        [TestMethod()]
+        public void GetNewUrl2Test()
+        {
+            //Given
+            string root = "https://books.toscrape.com";
+            string newPath = "static/oscar/favicon.ico";
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            string result = fileManagement.GetNewUrl(root, newPath);
+
+            //Then
+            Assert.AreEqual(result, "https://books.toscrape.com/static/oscar/favicon.ico");
         }
     }
 }

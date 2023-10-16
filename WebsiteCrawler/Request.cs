@@ -2,6 +2,7 @@
 {
     public class Request
     {
-        public string? Url { get; set; }
+        public required string Url { get; set; }
+        public required string Output { get; set; }
     }
 }

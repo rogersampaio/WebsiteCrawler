@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Controllers
 {
-    public class FileManagement(ILogger<FileManagement> logger) : IFileManagement
+    public partial class FileManagement(ILogger<FileManagement> logger) : IFileManagement
     {
         private readonly ILogger _logger = logger;
 
@@ -14,17 +15,23 @@ namespace WebsiteCrawler.Controllers
         /// <param name="url">URL of the original file</param>
         /// <returns>False if </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public bool Save(string? text, string? url)
+        public bool Save(string? text, string? url, string? output)
         {
-            string path = GetPath(url);
-            Directory.CreateDirectory(path);
-            string fileName = GetFilename(url);
-            string filePath = Path.Combine(path, fileName);
-
-            if (String.IsNullOrEmpty(text)) {
-                _logger.LogInformation("File does not contains any text: {filePath}", filePath);
+            if (string.IsNullOrEmpty(text))
+            {
+                _logger.LogInformation("File does not contains any text: {filePath}", url);
                 return false;
             }
+
+            if (string.IsNullOrEmpty(url))
+            {
+                _logger.LogInformation("URL is null");
+                return false;
+            }
+
+            string path = GetPath(url, output);
+            string fileName = GetFilename(url);
+            string filePath = Path.Combine(path, fileName);
 
             if (File.Exists(filePath)) {
                 _logger.LogInformation("File already exists: {filePath}", filePath);
@@ -34,11 +41,23 @@ namespace WebsiteCrawler.Controllers
             try
             {
                 _logger.LogInformation("Saving file locally: {filePath}", filePath);
-                // Create the file, or overwrite if the file exists.
-                using (FileStream fs = File.Create(filePath))
+
+                Directory.CreateDirectory(path);
+
+                if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase) 
+                    || url.Contains(".jpeg", StringComparison.CurrentCultureIgnoreCase)
+                    || url.Contains(".woff", StringComparison.CurrentCultureIgnoreCase)
+                    || url.Contains(".eot", StringComparison.CurrentCultureIgnoreCase)
+                    || url.Contains(".svg", StringComparison.CurrentCultureIgnoreCase)
+                    || url.Contains(".ttf", StringComparison.CurrentCultureIgnoreCase))
                 {
+                    WebClient webClient = new();
+                    webClient.DownloadFile(url, filePath);
+                }
+                else
+                {
+                    using FileStream fs = File.Create(filePath);
                     byte[] info = new UTF8Encoding(true).GetBytes(text);
-                    // Add some information to the file.
                     fs.Write(info, 0, info.Length);
                 }
             }
@@ -52,10 +71,10 @@ namespace WebsiteCrawler.Controllers
             return true;
         }
 
-        public string GetPath(string? url)
+        public string GetPath(string? url, string? output)
         {
             if (string.IsNullOrEmpty(url))
-                return "/";
+                return "";
 
             Uri myUri = new(url);
             string absolutePath = myUri.AbsolutePath;
@@ -65,11 +84,11 @@ namespace WebsiteCrawler.Controllers
 
             if (fileName.Contains('.')) {
                 string pathWithoutFileName = absolutePath.Replace($"/{fileName}", "");
-                return $"source{pathWithoutFileName}"; ;
+                return $"{output}{pathWithoutFileName}";
             }
             else
             {
-                return $"source{myUri.AbsolutePath}";
+                return $"{output}{myUri.AbsolutePath}";
             }            
         }
 
@@ -79,13 +98,15 @@ namespace WebsiteCrawler.Controllers
                 return "/";
 
             Uri myUri = new(url);
-
-            //new for me: using index operator
+            //using index operator
             string fileName = myUri.Segments[^1];
 
             if (fileName.Contains('.'))
             {
-                return fileName;
+                if (fileName.Contains(".html") && fileName.Contains('%'))
+                    return fileName[..fileName.IndexOf('%')];
+                else
+                    return fileName;
             }
             else
             {
@@ -93,9 +114,39 @@ namespace WebsiteCrawler.Controllers
             }
         }
 
-        public bool IsHtml(string? url) {
+        public bool IsReadable(string? url) {
             string fileName =  GetFilename(url);
-            return fileName.Contains(".html");
+            return fileName.Contains(".html") || fileName.Contains(".css");
+        }
+
+        public string GetNewUrl(string? root, string newPath)
+        {
+            if (root == null)
+                return "";
+
+            string filename = GetFilename(root);
+            string newRoot = root;
+            if (root.Contains(filename))
+                newRoot = root[..root.IndexOf(filename)];
+            Uri uri = new(newRoot);
+            string domain = root;
+            if (uri.AbsolutePath.Length > 1)
+                domain = root[..root.IndexOf(uri.AbsolutePath)];
+
+            int removeSegments = 0;
+            foreach (string segment in newPath.Split('/'))
+            {
+                if (segment == "..")
+                    removeSegments++;
+            }
+            
+            string result = domain;
+            for (int i = 0; i < uri.Segments.Length - removeSegments; i++)
+            {
+                result += uri.Segments[i];
+            }
+            result += newPath.Replace("../", "");
+            return result;
         }
     }
 }
