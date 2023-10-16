@@ -1,5 +1,6 @@
+using Polly;
+using Polly.Extensions.Http;
 using WebsiteCrawler.Commands;
-using WebsiteCrawler.Controllers;
 using WebsiteCrawler.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IParsePage, ParsePage>();
 builder.Services.AddScoped<IExtractURLs, ExtractURLs>();
 builder.Services.AddScoped<IFileManagement, FileManagement>();
+
+builder.Services.AddHttpClient("HttpClient").AddPolicyHandler(GetRetryPolicy());
 
 var app = builder.Build();
 
@@ -32,3 +35,17 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+      // Handle HttpRequestExceptions, 408 and 5xx status codes
+      .HandleTransientHttpError()
+      // Handle 404 not found
+      .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+      // Handle 401 Unauthorized
+      .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+      // What to do if any of the above erros occur:
+      // Retry 8 times, each time wait 1, 2, 3, 4, 5, 6, 7, and 8 seconds before retrying.
+      .WaitAndRetryAsync(8, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+}

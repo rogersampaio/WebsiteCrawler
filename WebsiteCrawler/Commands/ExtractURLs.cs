@@ -19,8 +19,11 @@ namespace WebsiteCrawler.Commands
             {
                 string url = match.Value.Replace("href=", "").Replace("\"", "");
                 if (url.Contains(' '))
-                    //using range operator
-                    url = url[..url.IndexOf(' ')];
+                    url = url[..url.IndexOf(' ')]; //range operator
+                if (url.Contains("#addreview") || url.Contains("/reviews/"))
+                    continue;
+                if (url.Contains("><img"))
+                    url = url.Replace("><img", "");
                 list.Add(url);
             }
 
@@ -29,7 +32,7 @@ namespace WebsiteCrawler.Commands
             foreach (Match match in matches.Cast<Match>())
             {
                 string url = match.Value.Replace("src=", "").Replace("\"", "");
-                if (url.Contains("http"))
+                if (url.Contains("http") || url.Contains("html5shim.googlecode"))
                     continue;
                 if (url.Contains(' '))
                     url = url[..url.IndexOf(' ')];

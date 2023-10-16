@@ -7,6 +7,7 @@ namespace WebsiteCrawler.Commands
     public partial class FileManagement(ILogger<FileManagement> logger) : IFileManagement
     {
         private readonly ILogger _logger = logger;
+        private readonly object fileLock = new();
 
         /// <summary>
         /// Save file if if does not exist
@@ -33,10 +34,13 @@ namespace WebsiteCrawler.Commands
             string fileName = GetFilename(url);
             string filePath = Path.Combine(path, fileName);
 
-            if (File.Exists(filePath))
+            lock (fileLock)
             {
-                //_logger.LogInformation("File already exists: {filePath}", filePath);
-                return false;
+                if (File.Exists(filePath))
+                {
+                    //_logger.LogInformation("File already exists: {filePath}", filePath);
+                    return false;
+                }
             }
 
             try
@@ -59,16 +63,22 @@ namespace WebsiteCrawler.Commands
                 {
                     text = FixFontAwesome(text, fileName);
 
-                    using FileStream fs = File.Create(filePath);
-                    byte[] info = new UTF8Encoding(true).GetBytes(text);
-                    fs.Write(info, 0, info.Length);
+                    lock (fileLock)
+                    {
+                        using (FileStream fs = File.Create(filePath))
+                        {
+                            byte[] info = new UTF8Encoding(true).GetBytes(text);
+                            fs.Write(info, 0, info.Length);
+                        }
+                    }
                 }
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
-                _logger.LogError("Exception Saving file: {filePath}", filePath);
-                throw;
+                _logger.LogError("Exception Saving file: {filePath}, Exception: {Message}", filePath, ex.Message);
+                //throw;
+                return false;
             }
 
             return true;

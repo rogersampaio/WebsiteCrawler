@@ -1,10 +1,12 @@
-﻿using WebsiteCrawler.Interfaces;
+﻿using System.Net;
+using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Commands
 {
-    public class ParsePage(ILogger<ParsePage> logger) : IParsePage
+    public class ParsePage(ILogger<ParsePage> logger, IHttpClientFactory clientFactory) : IParsePage
     {
         private readonly ILogger _logger = logger;
+        private readonly IHttpClientFactory _clientFactory = clientFactory;
 
         public async Task<string> Execute(string? url)
         {
@@ -22,17 +24,29 @@ namespace WebsiteCrawler.Commands
                     return "specialFile";
 
                 //_logger.LogInformation("Getting source code of {url}", url);
-                var myClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
-                var response = await myClient.GetAsync(url);
+                var httpClient = _clientFactory.CreateClient("HttpClient");
+                var response = await httpClient.GetAsync(url);
                 var streamResponse = await response.Content.ReadAsStringAsync();
-                return streamResponse;
+                
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return streamResponse;
+                }
+                else
+                {
+                    throw new Exception("ParsePage error");
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _logger.LogError("ParsePage error: {url}", url);
+                _logger.LogError("ParsePage error: {url}, message: {Message}", url, ex.Message);
                 throw;
             }
 
         }
+
+        
     }
+
+
 }
