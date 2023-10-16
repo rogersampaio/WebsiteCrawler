@@ -22,7 +22,7 @@ namespace WebsiteCrawler.Controllers
             ArgumentNullException.ThrowIfNull(request);
 
             DateTime startTime = DateTime.Now;
-            _logger.LogInformation("Starting crawling {Url} at {startTime}", request?.Url, startTime);
+            //_logger.LogInformation("Starting crawling {Url} at {startTime}", request?.Url, startTime);
 
             //1 - Get the inner content of requested URL
             string mainBody = await _parsePage.Execute(request?.Url);
@@ -50,7 +50,7 @@ namespace WebsiteCrawler.Controllers
                 Task.WaitAll(taskList);
             }
 
-            _logger.LogInformation("Finished crawling in {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
+            //_logger.LogInformation("Finished crawling in {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
         }
     }
 }

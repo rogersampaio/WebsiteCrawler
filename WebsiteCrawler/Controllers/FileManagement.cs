@@ -56,6 +56,8 @@ namespace WebsiteCrawler.Controllers
                 }
                 else
                 {
+                    text = FixFontAwesome(text, fileName);
+
                     using FileStream fs = File.Create(filePath);
                     byte[] info = new UTF8Encoding(true).GetBytes(text);
                     fs.Write(info, 0, info.Length);
@@ -69,6 +71,21 @@ namespace WebsiteCrawler.Controllers
             }
 
             return true;
+        }
+
+        private static string FixFontAwesome(string text, string filename)
+        {
+            if (filename.Contains(".css"))
+            {
+                return text
+                    .Replace("../fonts/fontawesome-webfont.eot%3Fv=3.2.1", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.eot")
+                    .Replace("../fonts/fontawesome-webfont.eot%3F", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.eot")
+                    .Replace("../fonts/fontawesome-webfont.woff%3Fv=3.2.1", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.woff")
+                    .Replace("../fonts/fontawesome-webfont.ttf%3Fv=3.2.1", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.ttf");
+            }
+            else {
+                return text;
+            }
         }
 
         public string GetPath(string? url, string? output)

@@ -205,11 +205,9 @@ namespace WebsiteCrawler.Controllers.Tests
             string path = fileManagement.GetPath(url, _output);
             string fileName = fileManagement.GetFilename(url);
             string filePath = Path.Combine(path, fileName);
-            //File should have the name fontawesome-webfont.woff_v=3.2.1
+
             Assert.IsTrue(File.Exists(filePath));
         }
-
-        //
 
         [TestMethod()]
         public void SaveImageTest()
