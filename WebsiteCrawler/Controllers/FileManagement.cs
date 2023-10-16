@@ -34,13 +34,13 @@ namespace WebsiteCrawler.Controllers
             string filePath = Path.Combine(path, fileName);
 
             if (File.Exists(filePath)) {
-                _logger.LogInformation("File already exists: {filePath}", filePath);
+                //_logger.LogInformation("File already exists: {filePath}", filePath);
                 return false;
             }
 
             try
             {
-                _logger.LogInformation("Saving file locally: {filePath}", filePath);
+                //_logger.LogInformation("Saving file locally: {filePath}", filePath);
 
                 Directory.CreateDirectory(path);
 
