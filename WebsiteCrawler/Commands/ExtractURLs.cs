@@ -1,8 +1,7 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using WebsiteCrawler.Interfaces;
 
-namespace WebsiteCrawler.Controllers
+namespace WebsiteCrawler.Commands
 {
     public partial class ExtractURLs(ILogger<ExtractURLs> logger) : IExtractURLs
     {

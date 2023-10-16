@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace WebsiteCrawler.Controllers.Tests
+namespace WebsiteCrawler.Commands.Tests
 {
     [TestClass()]
     public class ParsePageTests

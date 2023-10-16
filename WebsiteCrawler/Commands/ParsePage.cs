@@ -1,7 +1,6 @@
-﻿using System.Data.SqlTypes;
-using WebsiteCrawler.Interfaces;
+﻿using WebsiteCrawler.Interfaces;
 
-namespace WebsiteCrawler.Controllers
+namespace WebsiteCrawler.Commands
 {
     public class ParsePage(ILogger<ParsePage> logger) : IParsePage
     {
@@ -14,7 +13,7 @@ namespace WebsiteCrawler.Controllers
                 if (string.IsNullOrEmpty(url))
                     return "";
 
-                if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase) 
+                if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".jpeg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".woff", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".eot", StringComparison.CurrentCultureIgnoreCase)
@@ -33,7 +32,7 @@ namespace WebsiteCrawler.Controllers
                 _logger.LogError("ParsePage error: {url}", url);
                 throw;
             }
-            
+
         }
     }
 }

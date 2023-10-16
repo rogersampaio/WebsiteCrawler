@@ -2,7 +2,7 @@
 using System.Text;
 using WebsiteCrawler.Interfaces;
 
-namespace WebsiteCrawler.Controllers
+namespace WebsiteCrawler.Commands
 {
     public partial class FileManagement(ILogger<FileManagement> logger) : IFileManagement
     {
@@ -33,7 +33,8 @@ namespace WebsiteCrawler.Controllers
             string fileName = GetFilename(url);
             string filePath = Path.Combine(path, fileName);
 
-            if (File.Exists(filePath)) {
+            if (File.Exists(filePath))
+            {
                 //_logger.LogInformation("File already exists: {filePath}", filePath);
                 return false;
             }
@@ -44,7 +45,7 @@ namespace WebsiteCrawler.Controllers
 
                 Directory.CreateDirectory(path);
 
-                if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase) 
+                if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".jpeg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".woff", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".eot", StringComparison.CurrentCultureIgnoreCase)
@@ -83,7 +84,8 @@ namespace WebsiteCrawler.Controllers
                     .Replace("../fonts/fontawesome-webfont.woff%3Fv=3.2.1", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.woff")
                     .Replace("../fonts/fontawesome-webfont.ttf%3Fv=3.2.1", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/font/fontawesome-webfont.ttf");
             }
-            else {
+            else
+            {
                 return text;
             }
         }
@@ -95,18 +97,19 @@ namespace WebsiteCrawler.Controllers
 
             Uri myUri = new(url);
             string absolutePath = myUri.AbsolutePath;
-            
+
             //new for me: using index operator
             string fileName = myUri.Segments[^1];
 
-            if (fileName.Contains('.')) {
+            if (fileName.Contains('.'))
+            {
                 string pathWithoutFileName = absolutePath.Replace($"/{fileName}", "");
                 return $"{output}{pathWithoutFileName}";
             }
             else
             {
                 return $"{output}{myUri.AbsolutePath}";
-            }            
+            }
         }
 
         public string GetFilename(string? url)
@@ -131,8 +134,9 @@ namespace WebsiteCrawler.Controllers
             }
         }
 
-        public bool IsReadable(string? url) {
-            string fileName =  GetFilename(url);
+        public bool IsReadable(string? url)
+        {
+            string fileName = GetFilename(url);
             return fileName.Contains(".html") || fileName.Contains(".css");
         }
 
@@ -156,7 +160,7 @@ namespace WebsiteCrawler.Controllers
                 if (segment == "..")
                     removeSegments++;
             }
-            
+
             string result = domain;
             for (int i = 0; i < uri.Segments.Length - removeSegments; i++)
             {
