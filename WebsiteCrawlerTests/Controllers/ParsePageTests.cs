@@ -7,7 +7,6 @@ namespace WebsiteCrawler.Controllers.Tests
     [TestClass()]
     public class ParsePageTests
     {
-
         public required ILogger<ParsePage> _logger;
 
         [TestInitialize()]
@@ -22,6 +21,21 @@ namespace WebsiteCrawler.Controllers.Tests
         {
             //Given
             string url = "https://books.toscrape.com/";
+            string result;
+
+            //When
+            ParsePage parsePage = new(_logger);
+            result = await parsePage.Execute(url);
+
+            //Then
+            Assert.IsTrue(result != null);
+        }
+
+        [TestMethod()]
+        public async Task ExecuteNullTest()
+        {
+            //Given
+            string url = "";
             string result;
 
             //When
