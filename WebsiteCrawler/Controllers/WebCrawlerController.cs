@@ -24,16 +24,16 @@ namespace WebsiteCrawler.Controllers
             DateTime startTime = DateTime.Now;
 
             //1 - Get the inner content of requested URL
-            string mainBody = await _parsePage.Execute(request?.Url);
+            string text = await _parsePage.Execute(request?.Url);
 
             //2 - Save local file passing text body content or download file if it's image/svg/etc
-            bool fileSaved = _fileManagement.Save(mainBody, request?.Url, request?.Output);
+            bool fileSaved = _fileManagement.Save(text, request?.Url, request?.Output);
 
             //3 - Extract new URLs from body content if it's readable and it was saved
             if (fileSaved 
                 && _fileManagement.IsReadable(request?.Url))
             {
-                List<string>? newURLList = _extractURLs.Execute(mainBody);
+                List<string>? newURLList = _extractURLs.Execute(text);
                 //4 - Loop through new URLs and repeat same action
                 Task[] taskList = [];
                 for (int i = 0; i < newURLList?.Count; i++)
@@ -47,8 +47,8 @@ namespace WebsiteCrawler.Controllers
                     }));
                 }
                 Task.WaitAll(taskList);
-                if (newURLList?.Count > 0)
-                    _logger.LogInformation("Batch of {Count} files processed: {Url}", newURLList?.Count, request?.Url);
+                //if (newURLList?.Count > 0)
+                //    _logger.LogInformation("Batch of {Count} files processed: {Url}", newURLList?.Count, request?.Url);
             }
         }
     }
