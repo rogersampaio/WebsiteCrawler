@@ -8,6 +8,7 @@ Postman example:
 **Instalation instructions:**
 
 Option 1: Checkout the project and Run it using Visual Studio 2022.
+
 Option 2: Checkout the project and run the WebsiteCrawler.exe executable inside "WebsiteCrawler\bin\Release\net8.0\publish" folder.
 
 It's an API Service, you need to call it, for example, using Postman, Swagger or any other fetch application.
