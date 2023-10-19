@@ -12,9 +12,9 @@ namespace WebsiteCrawler.Commands
         private readonly IExtractURLs _extractURLs = extractURLs;
         private readonly IFileManagement _fileManagement = fileManagement;
 
-        public async void Execute(string? url, string? output)
+        public void Execute(string? url, string? output)
         {
-            Task.WaitAll(ExecuteAllAsync(url, output));
+            ExecuteAllAsync(url, output).Wait();
         }
 
         public async Task<List<Task>> ExecuteAllAsync(string? url, string? output)
