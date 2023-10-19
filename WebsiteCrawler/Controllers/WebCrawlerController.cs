@@ -7,49 +7,17 @@ namespace WebsiteCrawler.Controllers
     [Route("[controller]")]
     public class WebCrawlerController(
         ILogger<WebCrawlerController> logger,
-        IParsePage parsePage,
-        IExtractURLs extractURLs,
-        IFileManagement fileManagement) : ControllerBase
+        IThreadManagement threadManagement) : ControllerBase
     {
         private readonly ILogger<WebCrawlerController> _logger = logger;
-        private readonly IParsePage _parsePage = parsePage;
-        private readonly IExtractURLs _extractURLs = extractURLs;
-        private readonly IFileManagement _fileManagement = fileManagement;
+        private readonly IThreadManagement _threadManagement = threadManagement;
 
         [HttpPost(Name = "PostStartCrawling")]
-        public async Task Post(Request request)
+        public void Post(Request request)
         {
-            ArgumentNullException.ThrowIfNull(request);
-
             DateTime startTime = DateTime.Now;
-
-            //1 - Get the inner content of requested URL
-            string text = await _parsePage.Execute(request?.Url);
-
-            //2 - Save local file passing text body content or download file if it's image/svg/etc
-            bool fileSaved = _fileManagement.Save(text, request?.Url, request?.Output);
-
-            //3 - Extract new URLs from body content if it's readable and it was saved
-            if (fileSaved 
-                && _fileManagement.IsReadable(request?.Url))
-            {
-                List<string>? newURLList = _extractURLs.Execute(text);
-                //4 - Loop through new URLs and repeat same action
-                Task[] taskList = [];
-                for (int i = 0; i < newURLList?.Count; i++)
-                {
-                    //5 - Call same function recursively, passing URL and URL folder to create/update
-                    string url = newURLList[i];
-
-                    taskList.Append(Post(new Request { 
-                        Url = _fileManagement.GetNewUrl(request?.Url, url),
-                        Output = request?.Output ?? ""
-                    }));
-                }
-                Task.WaitAll(taskList);
-                //if (newURLList?.Count > 0)
-                //    _logger.LogInformation("Batch of {Count} files processed: {Url}", newURLList?.Count, request?.Url);
-            }
+            _threadManagement.Execute(request.Url, request.Output);
+            _logger.LogInformation("PostStartCrawling finished successfully in: {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
         }
     }
 }

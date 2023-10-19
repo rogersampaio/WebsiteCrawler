@@ -25,7 +25,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             ParsePage parsePage = new(_logger);
-            result = await parsePage.Execute(url);
+            result = await parsePage.ExecuteAsync(url);
 
             //Then
             Assert.IsTrue(result != null);
@@ -40,7 +40,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             ParsePage parsePage = new(_logger);
-            result = await parsePage.Execute(url);
+            result = await parsePage.ExecuteAsync(url);
 
             //Then
             Assert.IsTrue(result != null);

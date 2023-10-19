@@ -8,7 +8,7 @@ namespace WebsiteCrawler.Commands
         private readonly ILogger _logger = logger;
         private readonly IHttpClientFactory _clientFactory = clientFactory;
 
-        public async Task<string> Execute(string? url)
+        public async Task<string> ExecuteAsync(string? url)
         {
             try
             {

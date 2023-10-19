@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IParsePage, ParsePage>();
 builder.Services.AddScoped<IExtractURLs, ExtractURLs>();
 builder.Services.AddScoped<IFileManagement, FileManagement>();
+builder.Services.AddScoped<IThreadManagement, ThreadManagement>();
 
 builder.Services.AddHttpClient("HttpClient").AddPolicyHandler(GetRetryPolicy());
 
