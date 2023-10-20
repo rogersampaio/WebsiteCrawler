@@ -5,7 +5,12 @@ VisualStudioVersion = 17.8.34205.153
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteCrawler", "WebsiteCrawler\WebsiteCrawler.csproj", "{BBF533E1-7B34-4587-ADB1-A1D2F4355927}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteCrawlerTests", "WebsiteCrawlerTests\WebsiteCrawlerTests.csproj", "{0B74E39C-70EF-4B6D-B88C-BB14BD4EE518}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteCrawlerTests", "WebsiteCrawlerTests\WebsiteCrawlerTests.csproj", "{0B74E39C-70EF-4B6D-B88C-BB14BD4EE518}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8D65E41-7015-4C14-8E87-53AB868AD19B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Commands
@@ -7,6 +6,7 @@ namespace WebsiteCrawler.Commands
     public partial class FileManagement(ILogger<FileManagement> logger) : IFileManagement
     {
         private readonly ILogger _logger = logger;
+        private readonly HttpClient _httpClient = new();
         private readonly object fileLock = new();
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace WebsiteCrawler.Commands
         /// <param name="url">URL of the original file</param>
         /// <returns>False if </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public bool Save(string? text, string? url, string? output)
+        public async Task<bool> SaveAsync(string? text, string? url, string? output)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -38,15 +38,12 @@ namespace WebsiteCrawler.Commands
             {
                 if (File.Exists(filePath))
                 {
-                    //_logger.LogInformation("File already exists: {filePath}", filePath);
                     return false;
                 }
             }
 
             try
             {
-                //_logger.LogInformation("Saving file locally: {filePath}", filePath);
-
                 Directory.CreateDirectory(path);
 
                 if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase)
@@ -56,8 +53,11 @@ namespace WebsiteCrawler.Commands
                     || url.Contains(".svg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".ttf", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    WebClient webClient = new();
-                    webClient.DownloadFile(url, filePath);
+                    byte[] fileBytes = await _httpClient.GetByteArrayAsync(url);
+                    lock (fileLock)
+                    {
+                        File.WriteAllBytes(filePath, fileBytes);
+                    }
                 }
                 else
                 {
@@ -65,11 +65,9 @@ namespace WebsiteCrawler.Commands
 
                     lock (fileLock)
                     {
-                        using (FileStream fs = File.Create(filePath))
-                        {
-                            byte[] info = new UTF8Encoding(true).GetBytes(text);
-                            fs.Write(info, 0, info.Length);
-                        }
+                        using FileStream fs = File.Create(filePath);
+                        byte[] info = new UTF8Encoding(true).GetBytes(text);
+                        fs.Write(info, 0, info.Length);
                     }
                 }
             }
@@ -77,7 +75,6 @@ namespace WebsiteCrawler.Commands
             catch (Exception ex)
             {
                 _logger.LogError("Exception Saving file: {filePath}, Exception: {Message}", filePath, ex.Message);
-                //throw;
                 return false;
             }
 
@@ -133,7 +130,7 @@ namespace WebsiteCrawler.Commands
 
             if (fileName.Contains('.'))
             {
-                if (fileName.Contains(".html") && fileName.Contains('%'))
+                if ((fileName.Contains(".html") || fileName.Contains(".jpg")) && fileName.Contains('%'))
                     return fileName[..fileName.IndexOf('%')];
                 else
                     return fileName;

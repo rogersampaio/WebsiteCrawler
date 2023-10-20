@@ -48,7 +48,6 @@ namespace WebsiteCrawler.Commands
             }
 
             List<string> distinctList = list.Distinct().ToList();
-            //_logger.LogInformation("Extracted {Count} URLs from body", distinctList.Count);
             return distinctList;
         }
 

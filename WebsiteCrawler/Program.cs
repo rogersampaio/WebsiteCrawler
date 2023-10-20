@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IParsePage, ParsePage>();
 builder.Services.AddScoped<IExtractURLs, ExtractURLs>();
 builder.Services.AddScoped<IFileManagement, FileManagement>();
+builder.Services.AddScoped<IThreadManagement, ThreadManagement>();
 
 builder.Services.AddHttpClient("HttpClient").AddPolicyHandler(GetRetryPolicy());
 
@@ -46,6 +47,6 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
       // Handle 401 Unauthorized
       .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.Unauthorized)
       // What to do if any of the above erros occur:
-      // Retry 8 times, each time wait 1, 2, 3, 4, 5, 6, 7, and 8 seconds before retrying.
-      .WaitAndRetryAsync(8, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+      // Retry 10 times, each time wait 1, 2, 3, 4, 5, 6, 7, 8, 9 and 10 seconds before retrying.
+      .WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 }

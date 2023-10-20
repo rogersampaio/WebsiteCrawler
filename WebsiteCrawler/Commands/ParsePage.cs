@@ -8,7 +8,7 @@ namespace WebsiteCrawler.Commands
         private readonly ILogger _logger = logger;
         private readonly IHttpClientFactory _clientFactory = clientFactory;
 
-        public async Task<string> Execute(string? url)
+        public async Task<string> ExecuteAsync(string? url)
         {
             try
             {
@@ -23,7 +23,6 @@ namespace WebsiteCrawler.Commands
                     || url.Contains(".ttf", StringComparison.CurrentCultureIgnoreCase))
                     return "specialFile";
 
-                //_logger.LogInformation("Getting source code of {url}", url);
                 var httpClient = _clientFactory.CreateClient("HttpClient");
                 var response = await httpClient.GetAsync(url);
                 var streamResponse = await response.Content.ReadAsStringAsync();

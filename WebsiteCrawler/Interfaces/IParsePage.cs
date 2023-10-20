@@ -2,6 +2,6 @@
 {
     public interface IParsePage
     {
-        public Task<string> Execute(string? url);
+        public Task<string> ExecuteAsync(string? url);
     }
 }
