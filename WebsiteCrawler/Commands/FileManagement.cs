@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using WebsiteCrawler.Interfaces;
 
 namespace WebsiteCrawler.Commands
@@ -7,6 +6,7 @@ namespace WebsiteCrawler.Commands
     public partial class FileManagement(ILogger<FileManagement> logger) : IFileManagement
     {
         private readonly ILogger _logger = logger;
+        private readonly HttpClient _httpClient = new();
         private readonly object fileLock = new();
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace WebsiteCrawler.Commands
         /// <param name="url">URL of the original file</param>
         /// <returns>False if </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public bool Save(string? text, string? url, string? output)
+        public async Task<bool> SaveAsync(string? text, string? url, string? output)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -53,8 +53,11 @@ namespace WebsiteCrawler.Commands
                     || url.Contains(".svg", StringComparison.CurrentCultureIgnoreCase)
                     || url.Contains(".ttf", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    WebClient webClient = new();
-                    webClient.DownloadFile(url, filePath);
+                    byte[] fileBytes = await _httpClient.GetByteArrayAsync(url);
+                    lock (fileLock)
+                    {
+                        File.WriteAllBytes(filePath, fileBytes);
+                    }
                 }
                 else
                 {

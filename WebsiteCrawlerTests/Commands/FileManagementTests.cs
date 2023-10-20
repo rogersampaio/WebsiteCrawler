@@ -146,7 +146,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -163,7 +163,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -180,7 +180,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -197,7 +197,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -214,7 +214,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -232,7 +232,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);
@@ -250,7 +250,7 @@ namespace WebsiteCrawler.Commands.Tests
 
             //When
             FileManagement fileManagement = new(_logger);
-            fileManagement.Save("test", url, _output);
+            fileManagement.SaveAsync("test", url, _output);
 
             //Then
             string path = fileManagement.GetPath(url, _output);

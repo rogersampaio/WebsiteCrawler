@@ -44,7 +44,7 @@ namespace WebsiteCrawler.Commands
             string text = await _parsePage.ExecuteAsync(url);
 
             //2 - Save local file passing text body content or download file if it's image/svg/etc
-            bool fileSaved = _fileManagement.Save(text, url, output);
+            bool fileSaved = await _fileManagement.SaveAsync(text, url, output);
 
             //3 - Extract new URLs from body content if it's readable and it was saved
             if (fileSaved
