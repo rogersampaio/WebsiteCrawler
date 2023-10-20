@@ -23,7 +23,6 @@ namespace WebsiteCrawler.Commands
                     || url.Contains(".ttf", StringComparison.CurrentCultureIgnoreCase))
                     return "specialFile";
 
-                //_logger.LogInformation("Getting source code of {url}", url);
                 var httpClient = _clientFactory.CreateClient("HttpClient");
                 var response = await httpClient.GetAsync(url);
                 var streamResponse = await response.Content.ReadAsStringAsync();

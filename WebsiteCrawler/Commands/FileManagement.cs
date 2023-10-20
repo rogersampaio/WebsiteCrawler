@@ -38,15 +38,12 @@ namespace WebsiteCrawler.Commands
             {
                 if (File.Exists(filePath))
                 {
-                    //_logger.LogInformation("File already exists: {filePath}", filePath);
                     return false;
                 }
             }
 
             try
             {
-                //_logger.LogInformation("Saving file locally: {filePath}", filePath);
-
                 Directory.CreateDirectory(path);
 
                 if (url.Contains(".jpg", StringComparison.CurrentCultureIgnoreCase)
@@ -65,11 +62,9 @@ namespace WebsiteCrawler.Commands
 
                     lock (fileLock)
                     {
-                        using (FileStream fs = File.Create(filePath))
-                        {
-                            byte[] info = new UTF8Encoding(true).GetBytes(text);
-                            fs.Write(info, 0, info.Length);
-                        }
+                        using FileStream fs = File.Create(filePath);
+                        byte[] info = new UTF8Encoding(true).GetBytes(text);
+                        fs.Write(info, 0, info.Length);
                     }
                 }
             }
@@ -77,7 +72,6 @@ namespace WebsiteCrawler.Commands
             catch (Exception ex)
             {
                 _logger.LogError("Exception Saving file: {filePath}, Exception: {Message}", filePath, ex.Message);
-                //throw;
                 return false;
             }
 
@@ -133,7 +127,7 @@ namespace WebsiteCrawler.Commands
 
             if (fileName.Contains('.'))
             {
-                if (fileName.Contains(".html") && fileName.Contains('%'))
+                if ((fileName.Contains(".html") || fileName.Contains(".jpg")) && fileName.Contains('%'))
                     return fileName[..fileName.IndexOf('%')];
                 else
                     return fileName;

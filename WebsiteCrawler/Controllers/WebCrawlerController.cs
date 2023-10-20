@@ -13,11 +13,14 @@ namespace WebsiteCrawler.Controllers
         private readonly IThreadManagement _threadManagement = threadManagement;
 
         [HttpPost(Name = "PostStartCrawling")]
-        public void Post(Request request)
+        public string Post(Request request)
         {
             DateTime startTime = DateTime.Now;
             _threadManagement.Execute(request.Url, request.Output);
-            _logger.LogInformation("PostStartCrawling finished successfully in: {TotalSeconds} seconds", (DateTime.Now - startTime).TotalSeconds);
+
+            string result = $"PostStartCrawling finished successfully in: {(DateTime.Now - startTime).TotalSeconds} seconds";
+            _logger.LogInformation(result);
+            return result;
         }
     }
 }

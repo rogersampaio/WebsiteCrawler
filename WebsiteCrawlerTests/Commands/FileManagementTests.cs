@@ -124,6 +124,21 @@ namespace WebsiteCrawler.Commands.Tests
         }
 
         [TestMethod()]
+        public void GetFileNameWithWithStrangeNameTest()
+        {
+            //Given
+            string url = "https://books.toscrape.com/media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg any new Parameter here";
+            string result;
+
+            //When
+            FileManagement fileManagement = new(_logger);
+            result = fileManagement.GetFilename(url);
+
+            //Then
+            Assert.AreEqual(result, "2cdad67c44b002e7ead0cc35693c0e8b.jpg");
+        }
+
+        [TestMethod()]
         public void SaveRootIndexTest()
         {
             //Given
